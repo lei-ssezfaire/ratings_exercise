@@ -9,6 +9,10 @@
 	<hr>
 
 	{% block content %} block content goes here {% endblock %}
-
+<ul>
+	{% for message in get_flashed_messages() %}
+		<li>{{ message }}</li>
+	{% endfor %}
+</ul>
 </body>
 </html>

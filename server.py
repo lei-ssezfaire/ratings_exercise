@@ -8,6 +8,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import User, Rating, Movie, connect_to_db, db
 
 
+
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -26,7 +27,34 @@ def index():
 
 
 @app.route('/show-sign-in')
+def signin():
+    """Show sign-in page"""
 
+    return render_template('sign_in.html')
+
+@app.route('/handle-sign-in')
+def handle_signin():
+	"""Get username, check against database and add if it doesn't exist"""
+
+	email = request.args.get("email")
+	password = request.args.get("password")
+
+	# check the db to see if username exists
+	all_users = User.query.filter(User.email == email).all()
+
+	if not all_users:
+		# if it doesn't, add it
+		username = User(email=email, password=password)
+		db.session.add(username)
+		db.session.commit()
+	else:
+		username = email
+	
+	#put the username in a session variable
+	session['current_user'] = username
+
+	flash("Logged in.")
+	return render_template('homepage.html')
 
 @app.route('/users')
 def user_list():
