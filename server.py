@@ -43,18 +43,24 @@ def handle_signin():
 	all_users = User.query.filter(User.email == email).all()
 
 	if not all_users:
-		# if it doesn't, add it
-		username = User(email=email, password=password)
-		db.session.add(username)
+		db.session.add(User(email=email, password=password))
 		db.session.commit()
-	else:
-		username = email
-	
-	#put the username in a session variable
-	session['current_user'] = username
+
+	session['current_user'] = email
 
 	flash("Logged in.")
 	return render_template('homepage.html')
+
+
+@app.route('/handle-log-out')
+def handle_log_out():
+
+	session['current_user'] = None
+	# print session['current_user']
+	flash("Logged Out")
+
+	return render_template('homepage.html')
+
 
 @app.route('/users')
 def user_list():
