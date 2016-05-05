@@ -82,12 +82,42 @@ def user_info(user_id):
 	return render_template('user_info.html', email=email, age=age, zipcode=zipcode, title_score_tuple_list=list_of_movie_ratings)
 
 
+@app.route('/movies/<int:movie_id>')
+def movie_info(movie_id):
+	
+	#join movies and ratings table
+	movies = db.session.query(Movie.title, Rating.score).join(Rating)
+	specific_movie = movies.filter_by(movie_id = movie_id).all()
+	movie_title = specific_movie[0][0]
+
+	# list_of_movies = []
+
+	# title, score = movies
+		# list_of_movies 
+	#title
+	#ratings
+	#set rating form
+	#page refresh should have new rating
+	#associate that rating with session id, check
+	#if exists, update, if not add
+
+	return render_template('movie_info.html', movie_title=movie_title, specific_movie=specific_movie)
+
 @app.route('/users')
 def user_list():
 	"""Show list of users."""
 
 	users = User.query.all()
 	return render_template('user_list.html', users=users)
+
+
+
+@app.route('/movies')
+def movie_list():
+	"""Show list of movies."""
+
+	movies = Movie.query.order_by('title').all()
+	return render_template('movie_list.html', movies=movies)
 
 
 if __name__ == "__main__":
