@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>{{ email }}</h2>
+    <p>User age: {{ age }}<br>
+      User zipcode: {{ zipcode }}<br>
+    <ul>
+      {% for title, score in title_score_tuple_list %}
+
+        <li>{{ title }} {{ score }}</li>
+      {% endfor %}
+    </ul>
+
+
+    </p>
+
+{% endblock %}

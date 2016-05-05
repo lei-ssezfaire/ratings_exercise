@@ -56,7 +56,6 @@ def handle_signin():
 def handle_log_out():
 
 	session['current_user'] = None
-	# print session['current_user']
 	flash("Logged Out")
 
 	return render_template('homepage.html')
@@ -66,35 +65,21 @@ def user_info(user_id):
 
 
 	user = User.query.filter_by(user_id=user_id).one()
-	#select email, age, zipcode from users where user_id = user_id
 	email = user.email
 	age = user.age
 	zipcode = user.zipcode
-	# with user id get all of the rows in ratings where
-	# with movie id from ratings, get movie title from movies
-	# make a tuple of movie title and rating
 	rating_list = Rating.query.filter_by(user_id=user_id).all()
 	list_of_movie_ratings =[]
+
 	for rating in rating_list:
 		movie_id = rating.movie_id
 		score = rating.score
 		movie_info = Movie.query.filter_by(movie_id=movie_id).one()
 		movie_title = movie_info.title
-		# select title from movie where movie_id=movie_id
 		the_tuple = (movie_title, score)
 		list_of_movie_ratings.append(the_tuple)
 
 	return render_template('user_info.html', email=email, age=age, zipcode=zipcode, title_score_tuple_list=list_of_movie_ratings)
-	# go to the right page pass back email, age, zipcode, tuple
-
-	# user_and_rating = db.session.query(Rating,
-	# 									User).join(User).filter_by(user_id=user_id).all()
-	# movie_id = user_and_rating.movie_id
-	# score = user_and_rating.score
-
-	# rating_and_movie = db.session.query()
-
-
 
 
 @app.route('/users')
