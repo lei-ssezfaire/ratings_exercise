@@ -82,24 +82,53 @@ def user_info(user_id):
 	return render_template('user_info.html', email=email, age=age, zipcode=zipcode, title_score_tuple_list=list_of_movie_ratings)
 
 
+@app.route('/handle_rating')
+def handle_rating():
+	"""Handles movie ratings"""
+
+	rating = request.args.get('user_score')
+
+	movie_info = request.args.get('movie_info')
+	print '*' * 50
+	print movie_info
+	print type(movie_info)
+	print '*' * 50
+	movie_list = [x.encode('UTF8') for x in movie_info]
+	movie_title = str(movie_list[0])
+
+	print "HERE IT IS!"
+	print movie_title
+	print '*' * 50
+
+	user = session['current_user']
+
+	#use movie_title to get movie_id
+	movie_id = db.session.query(Movie.movie_id).filter_by(title=movie_title).one()
+	# see the combination of movie_id, and our user is in a Rating row
+	rating_row = db.session.query(rating_id).filter_by(movie_id=movie_id, user_id=user).one()
+	if rating_row:
+		rating_row.score = rating
+		db.session.commit()
+	else:
+		new_row = Rating(movie_id=movie_id, user_id=user, score=rating)
+		db.session.add(new_row)
+		db.session.commit()
+
+	# if it is, update that rating row with new value
+	# if not insert new rating
+	movies = db.session.query(Movie.title, Rating.user_id, Rating.score).join(Rating)
+	specific_movie = movies.filter_by(movie_id = movie_id).all()
+
+
+	return render_template('movie_info.html', movie_title= movie_title, specific_movie=specific_movie)
+
+
 @app.route('/movies/<int:movie_id>')
 def movie_info(movie_id):
 	
-	#join movies and ratings table
-	movies = db.session.query(Movie.title, Rating.score).join(Rating)
+	movies = db.session.query(Movie.title, Rating.user_id, Rating.score).join(Rating)
 	specific_movie = movies.filter_by(movie_id = movie_id).all()
 	movie_title = specific_movie[0][0]
-
-	# list_of_movies = []
-
-	# title, score = movies
-		# list_of_movies 
-	#title
-	#ratings
-	#set rating form
-	#page refresh should have new rating
-	#associate that rating with session id, check
-	#if exists, update, if not add
 
 	return render_template('movie_info.html', movie_title=movie_title, specific_movie=specific_movie)
 

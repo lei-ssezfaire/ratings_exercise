@@ -2,11 +2,23 @@
 {% block content %}
 
     <h2>{{ movie_title }}</h2>
-    <ul>
-      {% for title, score in specific_movie %}
-        <li>{{ score }}</li>
+		<form action="/handle_rating">
+			Rate this movie: <input type="text" name="user_score" id="user_rating">
+			<input type="hidden" name="movie_info" value='{{ specific_movie }}'>
+			<input type="submit">
+		</form>
+		<br>
+    	<table>
+    		<tr>
+    		<th> <u>Rating</u> </th>
+    		<th> <u>User</u> </th>
+    		</tr>
+      {% for title, user_id, score in specific_movie %}
+      <tr>
+        <td>{{ score }}</td>
+        <td>{{ user_id }}</td>
+       </tr>
       {% endfor %}
-    </ul>
 
-
+		</table>
 {% endblock %}
